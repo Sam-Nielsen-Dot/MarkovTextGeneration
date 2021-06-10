@@ -4,8 +4,10 @@ import markovify
 import nltk
 from nltk.corpus import gutenberg
 import warnings
+import json
 warnings.filterwarnings('ignore')
 nlp = spacy.load('en_core_web_sm')
+
 
 #source - https://towardsdatascience.com/text-generation-with-markov-chains-an-introduction-to-using-markovify-742e6680dc33
 
@@ -26,6 +28,8 @@ class POSifiedText(markovify.Text):
         sentence = ' '.join(word.split('::')[0] for word in words)
         return sentence
 
+def get_gutenberg_ids():
+    return gutenberg.fileids()
 
 def load_sents(texts, filetype="gutenberg", cleaner_functions=[], clean_chapter_headings=True, base_cleaner_function=True):
     texts_raw = []
@@ -68,16 +72,34 @@ def load_sents(texts, filetype="gutenberg", cleaner_functions=[], clean_chapter_
 
     return return_sents
 
-def load_generator(sents):
-    generator = POSifiedText(sents, state_size=3)
+def load_generator(sents, state_size=3):
+    generator = POSifiedText(sents, state_size=state_size)
     return generator
 
-def generate_text(generator, max_chars=100):
+def generate_text(generator, max_chars=100, tries=100):
     if max_chars == None:
-        return generator.make_sentence()
+        return generator.make_sentence(tries=tries)
     else:
-        return generator.make_short_sentence(max_chars=max_chars)
+        return generator.make_short_sentence(max_chars=max_chars, tries=tries)
 
-def load_and_generate_text(texts, filetype):
+def load_and_generate_text(texts, filetype, tries=100):
     generator = load_generator(load_sents(texts, filetype=filetype))
-    return generate_text(generator)
+    return generate_text(generator, tries=tries)
+
+def save_model(generator, path="model.json"):
+    model_json = generator.to_json()
+    jsonFile = open(path, "w")
+    jsonFile.write(model_json)
+    jsonFile.close()
+    return True
+
+def load_model(json_path):
+    # Opening JSON file
+    f = open(json_path,)
+    
+    # returns JSON object as 
+    # a dictionary
+    data = json.load(f)
+
+    return POSifiedText.from_json(json.dumps(data))
+

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: MarkovTextGeneration
-Version: 0.1.0
+Version: 0.1.2
 Summary: Generating hallucinated text with Markov Chains
 Home-page: https://github.com/Sam-Nielsen-Dot/MarkovTextGeneration
 Author: Sam Nielsen
