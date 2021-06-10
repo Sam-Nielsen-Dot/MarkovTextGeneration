@@ -81,13 +81,3 @@ def generate_text(generator, max_chars=100):
 def load_and_generate_text(texts, filetype):
     generator = load_generator(load_sents(texts, filetype=filetype))
     return generate_text(generator)
-
-#Call the class on our text
-#generator_2 = load_generator(load_sents(["shakespeare-hamlet.txt", "shakespeare-macbeth.txt", "shakespeare-caesar.txt"], cleaner_functions=[wibbledy]))
-#generator_2 = load_generator(load_sents(["test.txt"], filetype="file"))
-
-#print(load_and_generate_text(["shakespeare-hamlet.txt", "shakespeare-macbeth.txt", "shakespeare-caesar.txt"], "gutenberg"))
-
-
-
-
