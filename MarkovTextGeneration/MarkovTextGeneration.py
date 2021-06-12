@@ -31,7 +31,10 @@ class POSifiedText(markovify.Text):
 def get_gutenberg_ids():
     return gutenberg.fileids()
 
-def load_sents(texts, filetype="gutenberg", cleaner_functions=[], clean_chapter_headings=True, base_cleaner_function=True):
+def load_sents(texts, filetype="gutenberg", cleaner_functions=[], 
+    clean_chapter_headings=True, base_cleaner_function=True, encoding=None, long=False):
+
+    
     texts_raw = []
     sents = []
 
@@ -44,7 +47,10 @@ def load_sents(texts, filetype="gutenberg", cleaner_functions=[], clean_chapter_
                 raise Exception(f"The only valid text options in the gutenberg corpus are: \n{gutenberg.fileids()}")
     elif filetype == "file":
         for text in texts:
-            f = open(text, "r")
+            if encoding == None:
+                f = open(text, "r")
+            else:
+                f = open(text, "r", encoding=encoding)
             texts_raw.append(f.read())
     
     else:
@@ -62,7 +68,8 @@ def load_sents(texts, filetype="gutenberg", cleaner_functions=[], clean_chapter_
 
         for cleaner_function in cleaner_functions:
             text = cleaner_function(text)
-
+        if long:
+            nlp.max_length = len(text)+100
         text_doc = nlp(text)
         sents.append(' '.join([sent.text for sent in text_doc.sents if len(sent.text) > 1]))
 
@@ -72,8 +79,11 @@ def load_sents(texts, filetype="gutenberg", cleaner_functions=[], clean_chapter_
 
     return return_sents
 
-def load_generator(sents, state_size=3):
-    generator = POSifiedText(sents, state_size=state_size)
+def load_generator(sents, state_size=3, long=False):
+    if long:
+        generator = POSifiedText(sents, state_size=state_size, retain_original=False)
+    else:
+        generator = POSifiedText(sents, state_size=state_size)
     return generator
 
 def generate_text(generator, max_chars=100, tries=100):

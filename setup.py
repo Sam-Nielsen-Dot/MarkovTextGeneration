@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='MarkovTextGeneration',
-    version='0.1.2',    
+    version='0.1.3',    
     description='Generating hallucinated text with Markov Chains',
     long_description="Read the wiki at https://github.com/Sam-Nielsen-Dot/MarkovTextGeneration/wiki",
     url='https://github.com/Sam-Nielsen-Dot/MarkovTextGeneration',
