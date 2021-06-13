@@ -86,11 +86,15 @@ def load_generator(sents, state_size=3, long=False):
         generator = POSifiedText(sents, state_size=state_size)
     return generator
 
-def generate_text(generator, max_chars=100, tries=100):
+def generate_text(generator, max_chars=100, tries=100, clean_for_spaces=True, seed=None):
     if max_chars == None:
-        return generator.make_sentence(tries=tries)
+        text = generator.make_sentence(tries=tries, init_state=seed)
     else:
-        return generator.make_short_sentence(max_chars=max_chars, tries=tries)
+        text = generator.make_short_sentence(max_chars=max_chars, tries=tries, init_state=seed)
+    if clean_for_spaces:
+        return clean_spaces(text)
+    else:
+        return text
 
 def load_and_generate_text(texts, filetype, tries=100):
     generator = load_generator(load_sents(texts, filetype=filetype))
@@ -112,4 +116,13 @@ def load_model(json_path):
     data = json.load(f)
 
     return POSifiedText.from_json(json.dumps(data))
+
+def clean_spaces(text):
+    return_str = []
+    for k in range(0, len(text)):
+        if text[k] == " " and text[k-1].isalpha() and text[k+1].isalpha() == False:
+            pass
+        else:
+            return_str.append(text[k])
+    return "".join(return_str)
 
